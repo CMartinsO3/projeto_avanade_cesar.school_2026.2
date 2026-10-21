@@ -15,10 +15,23 @@ Em desenvolvimento.
 - Google Gemini (IA)
 
 ## ▶️ Como rodar
+
+**Pré-requisitos:** Java 21 e Docker.
+
+1. Suba o banco de dados (PostgreSQL):
+```bash
+docker compose up -d
+```
+
+2. Rode a aplicação:
 ```bash
 ./mvnw spring-boot:run
 ```
-A aplicação sobe em `http://localhost:8080`.
+
+A API sobe em `http://localhost:8080`.
+O banco fica disponível em `localhost:5433` (usuário/senha/banco: `petcheckin`).
+
+Para desligar o banco: `docker compose down` (os dados são mantidos).
 
 ## 📁 Estrutura do projeto
 ```
@@ -27,7 +40,7 @@ src/main/java/com/caiooliveira/petcheckin/
 ├── dto/          → formatos dos dados que entram e saem da API
 ├── service/      → regras de negócio (em breve)
 ├── repository/   → acesso ao banco de dados (em breve)
-└── model/        → entidades salvas no banco (em breve)
+└── model/        → entidades salvas no banco (Pet, Reserva)
 ```
 
 ## 🔌 Endpoints

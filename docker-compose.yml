@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: petcheckin-db
+    environment:
+      POSTGRES_DB: petcheckin
+      POSTGRES_USER: petcheckin
+      POSTGRES_PASSWORD: petcheckin
+    ports:
+      - "5433:5432"
+    volumes:
+      - petcheckin-data:/var/lib/postgresql/data
+
+volumes:
+  petcheckin-data:
