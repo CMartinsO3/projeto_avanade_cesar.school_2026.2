@@ -15,8 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "reservas")
-public class Reserva
-{
+public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,25 +38,46 @@ public class Reserva
     protected Reserva() {
     }
 
-    public Reserva(Pet pet, LocalDate dataCheckin, LocalDate dataCheckout)
-    {
+    public Reserva(Pet pet, LocalDate dataCheckin, LocalDate dataCheckout) {
         this.pet = pet;
         this.dataCheckin = dataCheckin;
         this.dataCheckout = dataCheckout;
         this.status = StatusReserva.AGUARDANDO_DOCUMENTOS;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Pet getPet() { return pet; }
-    public void setPet(Pet pet) { this.pet = pet; }
+    public Pet getPet() {
+        return pet;
+    }
 
-    public LocalDate getDataCheckin() { return dataCheckin; }
-    public void setDataCheckin(LocalDate dataCheckin) { this.dataCheckin = dataCheckin; }
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
 
-    public LocalDate getDataCheckout() { return dataCheckout; }
-    public void setDataCheckout(LocalDate dataCheckout) { this.dataCheckout = dataCheckout; }
+    public LocalDate getDataCheckin() {
+        return dataCheckin;
+    }
 
-    public StatusReserva getStatus() { return status; }
-    public void setStatus(StatusReserva status) { this.status = status; }
+    public void setDataCheckin(LocalDate dataCheckin) {
+        this.dataCheckin = dataCheckin;
+    }
+
+    public LocalDate getDataCheckout() {
+        return dataCheckout;
+    }
+
+    public void setDataCheckout(LocalDate dataCheckout) {
+        this.dataCheckout = dataCheckout;
+    }
+
+    public StatusReserva getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusReserva status) {
+        this.status = status;
+    }
 }

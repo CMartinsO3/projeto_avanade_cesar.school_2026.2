@@ -13,8 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pets")
-public class Pet
-{
+public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +33,10 @@ public class Pet
 
     private LocalDate dataNascimento;
 
-    protected Pet()
-    {
+    protected Pet() {
     }
 
-    public Pet(String nome, String nomeTutor, Especie especie, String raca, LocalDate dataNascimento)
-    {
+    public Pet(String nome, String nomeTutor, Especie especie, String raca, LocalDate dataNascimento) {
         this.nome = nome;
         this.nomeTutor = nomeTutor;
         this.especie = especie;
@@ -47,20 +44,47 @@ public class Pet
         this.dataNascimento = dataNascimento;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public String getNome() {
+        return nome;
+    }
 
-    public String getNomeTutor() { return nomeTutor; }
-    public void setNomeTutor(String nomeTutor) { this.nomeTutor = nomeTutor; }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-    public Especie getEspecie() { return especie; }
-    public void setEspecie(Especie especie) { this.especie = especie; }
+    public String getNomeTutor() {
+        return nomeTutor;
+    }
 
-    public String getRaca() { return raca; }
-    public void setRaca(String raca) { this.raca = raca; }
+    public void setNomeTutor(String nomeTutor) {
+        this.nomeTutor = nomeTutor;
+    }
 
-    public LocalDate getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+    public Especie getEspecie() {
+        return especie;
+    }
+
+    public void setEspecie(Especie especie) {
+        this.especie = especie;
+    }
+
+    public String getRaca() {
+        return raca;
+    }
+
+    public void setRaca(String raca) {
+        this.raca = raca;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 }

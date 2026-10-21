@@ -1,7 +1,6 @@
 package com.caiooliveira.petcheckin.model;
 
-public enum Especie
-{
+public enum Especie {
     CACHORRO,
     GATO
 }

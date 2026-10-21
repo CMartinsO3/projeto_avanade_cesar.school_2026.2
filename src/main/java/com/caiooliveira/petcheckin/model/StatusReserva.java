@@ -1,7 +1,6 @@
 package com.caiooliveira.petcheckin.model;
 
-public enum StatusReserva
-{
+public enum StatusReserva {
     AGUARDANDO_DOCUMENTOS,
     CONFIRMADA,
     RECUSADA,
