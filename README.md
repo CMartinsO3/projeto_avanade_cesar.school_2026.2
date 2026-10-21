@@ -58,5 +58,12 @@ curl -X POST http://localhost:8080/pets \
   -d '{"nome":"Thor","nomeTutor":"Caio Oliveira","especie":"CACHORRO","raca":"Golden Retriever","dataNascimento":"2022-03-15"}'
 ```
 
+## 🧠 Decisões técnicas
+- **Datas no padrão ISO 8601 (`aaaa-mm-dd`)**: é o formato universal entre sistemas
+  (Java, PostgreSQL, JavaScript, IA), não é ambíguo e ordena corretamente.
+  A conversão para `dd/mm/aaaa` é feita apenas na interface (front-end).
+- **DTOs separados das entidades**: a API não expõe as entidades do banco;
+  isso evita que o cliente altere campos indevidos (como o `id`) e concentra as validações de entrada.
+
 ## 👤 Autor
 Caio Martins Oliveira
