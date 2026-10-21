@@ -38,8 +38,8 @@ Para desligar o banco: `docker compose down` (os dados são mantidos).
 src/main/java/com/caiooliveira/petcheckin/
 ├── controller/   → recebe as requisições HTTP e devolve as respostas
 ├── dto/          → formatos dos dados que entram e saem da API
-├── service/      → regras de negócio (em breve)
-├── repository/   → acesso ao banco de dados (em breve)
+├── service/      → regras de negócio
+├── repository/   → acesso ao banco de dados (Spring Data JPA)
 └── model/        → entidades salvas no banco (Pet, Reserva)
 ```
 
@@ -47,6 +47,16 @@ src/main/java/com/caiooliveira/petcheckin/
 | Método | Rota | Descrição |
 |---|---|---|
 | GET | `/health` | Verifica se a API está no ar |
+| POST | `/pets` | Cadastra um pet |
+| GET | `/pets` | Lista todos os pets |
+| GET | `/pets/{id}` | Busca um pet pelo id |
+
+### Exemplo: cadastrar um pet
+```bash
+curl -X POST http://localhost:8080/pets \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Thor","nomeTutor":"Caio Oliveira","especie":"CACHORRO","raca":"Golden Retriever","dataNascimento":"2022-03-15"}'
+```
 
 ## 👤 Autor
 Caio Martins Oliveira
