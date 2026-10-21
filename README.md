@@ -20,5 +20,20 @@ Em desenvolvimento.
 ```
 A aplicação sobe em `http://localhost:8080`.
 
+## 📁 Estrutura do projeto
+```
+src/main/java/com/caiooliveira/petcheckin/
+├── controller/   → recebe as requisições HTTP e devolve as respostas
+├── dto/          → formatos dos dados que entram e saem da API
+├── service/      → regras de negócio (em breve)
+├── repository/   → acesso ao banco de dados (em breve)
+└── model/        → entidades salvas no banco (em breve)
+```
+
+## 🔌 Endpoints
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/health` | Verifica se a API está no ar |
+
 ## 👤 Autor
 Caio Martins Oliveira
