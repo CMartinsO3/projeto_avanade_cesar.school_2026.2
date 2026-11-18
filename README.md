@@ -38,6 +38,7 @@ Para desligar o banco: `docker compose down` (os dados são mantidos).
 src/main/java/com/caiooliveira/petcheckin/
 ├── controller/   → recebe as requisições HTTP e devolve as respostas
 ├── dto/          → formatos dos dados que entram e saem da API
+├── exception/    → exceções próprias e tratamento global de erros
 ├── service/      → regras de negócio
 ├── repository/   → acesso ao banco de dados (Spring Data JPA)
 └── model/        → entidades salvas no banco (Pet, Reserva)
@@ -58,6 +59,16 @@ curl -X POST http://localhost:8080/api/pets \
   -d '{"nome":"Thor","nomeTutor":"Caio Oliveira","especie":"CACHORRO","raca":"Golden Retriever","dataNascimento":"2022-03-15"}'
 ```
 
+### Formato dos erros
+Todos os erros seguem o mesmo formato:
+```json
+{ "status": 404, "erro": "Pet não encontrado com id 999" }
+```
+Erros de validação também informam os campos com problema:
+```json
+{ "status": 400, "erro": "Dados inválidos", "campos": { "nome": "O nome do pet é obrigatório" } }
+```
+
 
 ## 🧠 Decisões técnicas
 - **Datas no padrão ISO 8601 (`aaaa-mm-dd`)**: é o formato universal entre sistemas
@@ -67,6 +78,9 @@ curl -X POST http://localhost:8080/api/pets \
   isso evita que o cliente altere campos indevidos (como o `id`) e concentra as validações de entrada.
 - **Prefixo `/api` nas rotas**: separa os endpoints da API das páginas do front-end,
   que serão servidas pelo mesmo servidor.
+- **Tratamento global de erros (`@RestControllerAdvice`)**: todas as respostas de erro têm o mesmo
+  formato, em português e sem detalhes internos (stack trace), que ficam apenas no log do servidor.
+  Os services lançam exceções de negócio e não conhecem HTTP.
 
 ## 👤 Autor
 Caio Martins Oliveira
