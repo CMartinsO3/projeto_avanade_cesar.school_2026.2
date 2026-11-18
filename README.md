@@ -54,6 +54,8 @@ src/main/java/com/caiooliveira/petcheckin/
 | POST | `/api/reservas` | Cadastra uma reserva (status inicial: `AGUARDANDO_DOCUMENTOS`) |
 | GET | `/api/reservas` | Lista todas as reservas |
 | GET | `/api/reservas/{id}` | Busca uma reserva pelo id |
+| POST | `/api/reservas/{id}/documentos` | Envia um documento (multipart: `arquivo` + `tipo`) |
+| GET | `/api/reservas/{id}/documentos` | Lista os documentos da reserva |
 
 ### Exemplo: cadastrar um pet
 ```bash
@@ -68,6 +70,13 @@ curl -X POST http://localhost:8080/api/reservas \
   -H "Content-Type: application/json" \
   -d '{"petId":1,"dataCheckin":"2026-12-01","dataCheckout":"2026-12-05"}'
 ```
+### Exemplo: enviar a carteira de vacinação
+```bash
+curl -X POST http://localhost:8080/api/reservas/1/documentos \
+  -F "tipo=CARTEIRA_VACINACAO" \
+  -F "arquivo=@carteira_thor.png;type=image/png"
+```
+Formatos aceitos: PDF, PNG e JPG (máx. 10MB).
 
 ### Formato dos erros
 Todos os erros seguem o mesmo formato:
@@ -94,6 +103,11 @@ Erros de validação também informam os campos com problema:
 - **Regras de entrada × regras de negócio**: validações de formato (campo obrigatório, data no passado)
   ficam nos DTOs com Bean Validation; regras que dependem do negócio ou comparam campos
   (ex.: check-out posterior ao check-in) ficam nos services e lançam `RegraNegocioException`.
+- **Arquivos no disco, metadados no banco**: o arquivo é salvo na pasta `uploads/` e o banco guarda
+  apenas o caminho e as informações do envio, mantendo o banco leve (padrão usado com storages como S3/Azure Blob).
+- **Nome do arquivo gerado com UUID**: evita que um arquivo sobrescreva outro e impede nomes maliciosos
+  (ex.: `../../`). O caminho interno não é exposto na API.
+- **Rota aninhada `/api/reservas/{id}/documentos`**: deixa explícito que todo documento pertence a uma reserva.
 
 ## 👤 Autor
 Caio Martins Oliveira

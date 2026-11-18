@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import com.caiooliveira.petcheckin.dto.ErroApiResponse;
 
@@ -85,6 +88,23 @@ public class GlobalExceptionHandler {
         return new ErroApiResponse(405,
                 "O método " + ex.getMethod() + " não é permitido nesta rota.",
                 null);
+    }
+
+    // 400 - faltou o arquivo ou o tipo no envio do documento
+    @ExceptionHandler({ MissingServletRequestPartException.class, MissingServletRequestParameterException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroApiResponse tratarCampoAusente(Exception ex) {
+        return new ErroApiResponse(400,
+                "Requisição incompleta. Envie o arquivo no campo 'arquivo' e o tipo no campo 'tipo' "
+                        + "(CARTEIRA_VACINACAO ou ATESTADO_VETERINARIO).",
+                null);
+    }
+
+    // 413 - arquivo maior que o limite configurado
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErroApiResponse> tratarArquivoGrande(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.status(413)
+                .body(new ErroApiResponse(413, "Arquivo muito grande. O tamanho máximo é 10MB.", null));
     }
 
     // Qualquer outro erro
