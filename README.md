@@ -46,17 +46,18 @@ src/main/java/com/caiooliveira/petcheckin/
 ## 🔌 Endpoints
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/health` | Verifica se a API está no ar |
-| POST | `/pets` | Cadastra um pet |
-| GET | `/pets` | Lista todos os pets |
-| GET | `/pets/{id}` | Busca um pet pelo id |
+| GET | `/api/health` | Verifica se a API está no ar |
+| POST | `/api/pets` | Cadastra um pet |
+| GET | `/api/pets` | Lista todos os pets |
+| GET | `/api/pets/{id}` | Busca um pet pelo id |
 
 ### Exemplo: cadastrar um pet
 ```bash
-curl -X POST http://localhost:8080/pets \
+curl -X POST http://localhost:8080/api/pets \
   -H "Content-Type: application/json" \
   -d '{"nome":"Thor","nomeTutor":"Caio Oliveira","especie":"CACHORRO","raca":"Golden Retriever","dataNascimento":"2022-03-15"}'
 ```
+
 
 ## 🧠 Decisões técnicas
 - **Datas no padrão ISO 8601 (`aaaa-mm-dd`)**: é o formato universal entre sistemas
@@ -64,6 +65,8 @@ curl -X POST http://localhost:8080/pets \
   A conversão para `dd/mm/aaaa` é feita apenas na interface (front-end).
 - **DTOs separados das entidades**: a API não expõe as entidades do banco;
   isso evita que o cliente altere campos indevidos (como o `id`) e concentra as validações de entrada.
+- **Prefixo `/api` nas rotas**: separa os endpoints da API das páginas do front-end,
+  que serão servidas pelo mesmo servidor.
 
 ## 👤 Autor
 Caio Martins Oliveira

@@ -10,7 +10,7 @@ import com.caiooliveira.petcheckin.dto.HealthResponse;
 @RestController
 public class HealthController {
 
-    @GetMapping("/health")
+    @GetMapping("/api/health")
     public HealthResponse verificarSaude() {
         return new HealthResponse(
                 "UP",

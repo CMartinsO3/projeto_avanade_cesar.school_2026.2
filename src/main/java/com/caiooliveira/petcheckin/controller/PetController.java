@@ -18,7 +18,7 @@ import com.caiooliveira.petcheckin.service.PetService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/api/pets")
 public class PetController {
 
     private final PetService petService;
