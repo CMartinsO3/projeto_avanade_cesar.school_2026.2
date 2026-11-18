@@ -51,12 +51,22 @@ src/main/java/com/caiooliveira/petcheckin/
 | POST | `/api/pets` | Cadastra um pet |
 | GET | `/api/pets` | Lista todos os pets |
 | GET | `/api/pets/{id}` | Busca um pet pelo id |
+| POST | `/api/reservas` | Cadastra uma reserva (status inicial: `AGUARDANDO_DOCUMENTOS`) |
+| GET | `/api/reservas` | Lista todas as reservas |
+| GET | `/api/reservas/{id}` | Busca uma reserva pelo id |
 
 ### Exemplo: cadastrar um pet
 ```bash
 curl -X POST http://localhost:8080/api/pets \
   -H "Content-Type: application/json" \
   -d '{"nome":"Thor","nomeTutor":"Caio Oliveira","especie":"CACHORRO","raca":"Golden Retriever","dataNascimento":"2022-03-15"}'
+```
+
+### Exemplo: cadastrar uma reserva
+```bash
+curl -X POST http://localhost:8080/api/reservas \
+  -H "Content-Type: application/json" \
+  -d '{"petId":1,"dataCheckin":"2026-12-01","dataCheckout":"2026-12-05"}'
 ```
 
 ### Formato dos erros
@@ -81,6 +91,9 @@ Erros de validação também informam os campos com problema:
 - **Tratamento global de erros (`@RestControllerAdvice`)**: todas as respostas de erro têm o mesmo
   formato, em português e sem detalhes internos (stack trace), que ficam apenas no log do servidor.
   Os services lançam exceções de negócio e não conhecem HTTP.
+- **Regras de entrada × regras de negócio**: validações de formato (campo obrigatório, data no passado)
+  ficam nos DTOs com Bean Validation; regras que dependem do negócio ou comparam campos
+  (ex.: check-out posterior ao check-in) ficam nos services e lançam `RegraNegocioException`.
 
 ## 👤 Autor
 Caio Martins Oliveira

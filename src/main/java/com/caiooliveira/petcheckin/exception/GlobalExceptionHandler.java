@@ -34,6 +34,13 @@ public class GlobalExceptionHandler {
         return new ErroApiResponse(404, ex.getMessage(), null);
     }
 
+    // 400 - violou uma regra de negócio (ex.: check-out antes do check-in)
+    @ExceptionHandler(RegraNegocioException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroApiResponse tratarRegraNegocio(RegraNegocioException ex) {
+        return new ErroApiResponse(400, ex.getMessage(), null);
+    }
+
     // 400 - falhou em alguma validação do DTO (@NotBlank, @NotNull, @Past...)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
