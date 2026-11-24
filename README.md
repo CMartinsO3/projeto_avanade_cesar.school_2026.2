@@ -16,6 +16,7 @@ Em desenvolvimento.
 - Google Gemini (`gemini-2.5-flash`) via API REST (`RestClient`) para extrair os dados em JSON
 - Expressões regulares (Regex) como alternativa quando a IA não está disponível
 - Jackson 3 (conversão de JSON)
+- Front-end em HTML, CSS e JavaScript puro (servido pelo próprio Spring Boot)
 
 ## ▶️ Como rodar
 
@@ -40,7 +41,8 @@ O arquivo `.env` está no `.gitignore`: a chave nunca vai para o GitHub.
 ./mvnw spring-boot:run
 ```
 
-A API sobe em `http://localhost:8080`.
+Abra **http://localhost:8080** no navegador para usar a interface.
+A API fica em `http://localhost:8080/api`.
 O banco fica disponível em `localhost:5433` (usuário/senha/banco: `petcheckin`).
 
 Para desligar o banco: `docker compose down` (os dados são mantidos).
@@ -57,8 +59,22 @@ src/main/java/com/caiooliveira/petcheckin/
 ├── repository/   → acesso ao banco de dados (Spring Data JPA)
 └── model/        → entidades salvas no banco (Pet, Reserva, Documento, Validacao) e enums
 
+src/main/resources/static/   → front-end (servido em http://localhost:8080)
+├── index.html    → estrutura das telas e ícones SVG
+├── css/estilos.css → visual (tema pet friendly)
+└── js/app.js     → chamadas à API e comportamento das telas
+
 docs/exemplos/    → carteiras fictícias para testar cada resultado
 ```
+
+## 🖥️ Interface web
+- **Documentos** (tela inicial): escolha a reserva, o tipo de documento e envie o arquivo
+  (arrastar e soltar ou clique). Um *stepper* mostra as 4 etapas
+  (Upload → Processamento → Validação → Resultado), e o resultado aparece em
+  **verde (apto)**, **vermelho (não apto)** ou **amarelo (em análise)**, com regras atendidas e pendências.
+- **Reservas**: cadastro e lista de reservas, com o status e o atalho "Enviar carteira".
+- **Meus pets**: cadastro e lista de pets.
+- **Resultados**: última validação de cada reserva.
 
 ## 🔌 Endpoints
 | Método | Rota | Descrição |
@@ -234,6 +250,16 @@ Erros de validação também informam os campos com problema:
   a mensagem aparece uma vez só para o tutor.
 - **Histórico de validações**: cada validação é salva (status, regras atendidas, pendências,
   data/hora e documento usado). O `GET` devolve a mais recente, e as anteriores ficam para auditoria.
+- **Front-end em JavaScript puro, servido pelo Spring**: sem framework e sem etapa de build,
+  e tudo sobe com um único comando. Como front e API estão na mesma origem, não é preciso configurar CORS.
+- **Proteção contra HTML malicioso no front**: todo texto vindo da API ou do usuário passa pela
+  função `esc()` antes de entrar na página, para evitar XSS (ex.: um pet chamado `<script>`).
+- **Validação do arquivo também no navegador**: o formato (PDF/PNG/JPG) e o tamanho (10MB) são
+  conferidos antes do envio, para o usuário ter uma resposta imediata. O back-end continua validando,
+  porque o front pode ser burlado.
+- **Upload com `XMLHttpRequest`**: diferente do `fetch`, ele avisa quando o arquivo terminou de subir,
+  e é isso que permite o stepper passar de "Upload" para "Processamento" no momento certo.
+- **Datas em `dd/mm/aaaa` só na tela**: a API continua em ISO 8601, e a conversão acontece no `app.js`.
 - **Validação separada do upload**: o tutor pode enviar a carteira de novo e validar outra vez;
   a validação sempre usa a carteira processada mais recente.
 
