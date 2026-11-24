@@ -10,14 +10,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.caiooliveira.petcheckin.dto.DocumentoResponse;
+import com.caiooliveira.petcheckin.dto.ResultadoExtracao;
 import com.caiooliveira.petcheckin.dto.ResultadoOcr;
 import com.caiooliveira.petcheckin.exception.ProcessamentoDocumentoException;
 import com.caiooliveira.petcheckin.exception.RecursoNaoEncontradoException;
 import com.caiooliveira.petcheckin.model.Documento;
 import com.caiooliveira.petcheckin.model.Reserva;
+import com.caiooliveira.petcheckin.model.StatusDocumento;
 import com.caiooliveira.petcheckin.model.TipoDocumento;
 import com.caiooliveira.petcheckin.repository.DocumentoRepository;
 import com.caiooliveira.petcheckin.repository.ReservaRepository;
+
+import tools.jackson.databind.json.JsonMapper;
 
 @Service
 public class DocumentoService {
@@ -28,15 +32,21 @@ public class DocumentoService {
     private final ReservaRepository reservaRepository;
     private final ArmazenamentoService armazenamentoService;
     private final OcrService ocrService;
+    private final ExtracaoService extracaoService;
+    private final JsonMapper jsonMapper;
 
     public DocumentoService(DocumentoRepository documentoRepository,
                             ReservaRepository reservaRepository,
                             ArmazenamentoService armazenamentoService,
-                            OcrService ocrService) {
+                            OcrService ocrService,
+                            ExtracaoService extracaoService,
+                            JsonMapper jsonMapper) {
         this.documentoRepository = documentoRepository;
         this.reservaRepository = reservaRepository;
         this.armazenamentoService = armazenamentoService;
         this.ocrService = ocrService;
+        this.extracaoService = extracaoService;
+        this.jsonMapper = jsonMapper;
     }
 
     public DocumentoResponse enviar(Long reservaId, TipoDocumento tipo, MultipartFile arquivo) {
@@ -54,6 +64,10 @@ public class DocumentoService {
         ));
 
         processarOcr(documento);
+        if (documento.getStatus() == StatusDocumento.PROCESSADO
+                && documento.getTipo() == TipoDocumento.CARTEIRA_VACINACAO) {
+            extrairDados(documento);
+        }
         return DocumentoResponse.de(documentoRepository.save(documento));
     }
 
@@ -76,6 +90,13 @@ public class DocumentoService {
             documento.registrarFalhaProcessamento();
             log.warn("Falha no OCR do documento {}: {}", documento.getId(), e.getMessage());
         }
+    }
+
+    private void extrairDados(Documento documento) {
+        ResultadoExtracao resultado = extracaoService.extrair(documento.getTextoExtraido());
+        String json = jsonMapper.writeValueAsString(resultado.dados());
+        documento.registrarExtracao(json, resultado.metodo());
+        log.info("Dados do documento {} extraídos com {}", documento.getId(), resultado.metodo());
     }
 
     private Reserva buscarReserva(Long reservaId) {

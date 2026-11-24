@@ -8,22 +8,33 @@ e aplica regras de negócio para dizer se o pet está **APTO** ou **NÃO APTO** 
 ## 🚧 Status
 Em desenvolvimento.
 
-## 🛠️ Tecnologias (planejadas)
-- Java 21 + Spring Boot 4
-- PostgreSQL (Docker)
-- Tesseract OCR (via linha de comando) + Apache PDFBox (PDF → imagem)
-- Google Gemini (IA)
+## 🛠️ Tecnologias
+- Java 21 + Spring Boot 4 (Spring Web MVC, Spring Data JPA, Bean Validation)
+- PostgreSQL 17 (Docker)
+- Tesseract OCR 5 (via linha de comando) + Apache PDFBox (PDF → imagem)
+- Google Gemini (`gemini-2.5-flash`) via API REST (`RestClient`) para extrair os dados em JSON
+- Expressões regulares (Regex) como alternativa quando a IA não está disponível
+- Jackson 3 (conversão de JSON)
 
 ## ▶️ Como rodar
 
-**Pré-requisitos:** Java 21 e Docker.
+**Pré-requisitos:** Java 21, Docker e Tesseract com o idioma português
+(`sudo apt install tesseract-ocr tesseract-ocr-por`).
 
 1. Suba o banco de dados (PostgreSQL):
 ```bash
 docker compose up -d
 ```
 
-2. Rode a aplicação:
+2. *(Opcional)* Configure a chave da IA. Sem ela, a extração usa Regex.
+```bash
+cp .env.example .env
+# edite o .env e troque "coloque-sua-chave-aqui" pela sua chave do Gemini
+# (gere em https://aistudio.google.com/apikey)
+```
+O arquivo `.env` está no `.gitignore`: a chave nunca vai para o GitHub.
+
+3. Rode a aplicação:
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -41,7 +52,7 @@ src/main/java/com/caiooliveira/petcheckin/
 ├── exception/    → exceções próprias e tratamento global de erros
 ├── service/      → regras de negócio
 ├── repository/   → acesso ao banco de dados (Spring Data JPA)
-└── model/        → entidades salvas no banco (Pet, Reserva)
+└── model/        → entidades salvas no banco (Pet, Reserva, Documento) e enums
 ```
 
 ## 🔌 Endpoints
@@ -77,6 +88,30 @@ curl -X POST http://localhost:8080/api/reservas/1/documentos \
   -F "arquivo=@carteira_thor.png;type=image/png"
 ```
 Formatos aceitos: PDF, PNG e JPG (máx. 10MB).
+
+Depois do OCR, os dados da carteira são extraídos automaticamente
+(com IA ou Regex — campo `metodoExtracao`). Resposta (resumida):
+```json
+{
+  "id": 5,
+  "status": "PROCESSADO",
+  "confiancaOcr": 94.8,
+  "palavrasOcr": 64,
+  "metodoExtracao": "REGEX",
+  "dadosExtraidos": {
+    "nomePet": "Thor",
+    "especie": "CACHORRO",
+    "raca": "Golden Retriever",
+    "dataNascimento": "2022-03-15",
+    "nomeTutor": "Caio Oliveira",
+    "crmvVeterinario": "CRMV-PE 12345",
+    "vacinas": [
+      { "nome": "Antirrábica", "tipo": "ANTIRRABICA", "dataAplicacao": "2026-03-10", "proximaDose": "2027-03-10" },
+      { "nome": "V10 (Polivalente)", "tipo": "POLIVALENTE", "dataAplicacao": "2026-04-15", "proximaDose": "2027-04-15" }
+    ]
+  }
+}
+```
 
 ### Formato dos erros
 Todos os erros seguem o mesmo formato:
@@ -115,6 +150,23 @@ Erros de validação também informam os campos com problema:
 - **Falha no OCR não perde o envio**: o documento é salvo antes do processamento e, se o OCR falhar,
   fica com status `FALHA_PROCESSAMENTO`. O processamento é síncrono no MVP; em produção, o ideal
   seria uma fila assíncrona.
+- **IA com fallback por Regex**: se a chave do Gemini não estiver configurada, ou se a IA falhar
+  (sem internet, limite de uso, timeout, resposta inválida), o sistema registra um aviso no log e
+  extrai os dados com expressões regulares. O fluxo nunca para por causa da IA, e a resposta informa
+  qual método foi usado (`IA` ou `REGEX`).
+- **Interface `ExtratorDadosCarteira`**: Gemini e Regex implementam o mesmo contrato. Para trocar de
+  IA (ex.: Azure OpenAI), basta criar outra implementação, sem mexer nas regras de negócio.
+- **JSON mode + `temperature = 0`**: o Gemini é obrigado a responder em JSON (`responseMimeType`)
+  e com temperatura zero, que dá respostas mais previsíveis. O prompt manda usar `null` quando a
+  informação não estiver no texto, para a IA não inventar dados.
+- **Timeouts na chamada à IA (10 s para conectar, 60 s para responder)**: uma IA lenta não trava o upload.
+- **Chave da IA fora do código**: lida da variável `GEMINI_API_KEY` (ou do arquivo `.env`, ignorado
+  pelo Git). O repositório tem apenas o `.env.example`, um modelo sem a chave.
+- **Dados extraídos guardados como JSON (`TEXT`)**: o formato pode evoluir (novos campos, outros
+  documentos) sem precisar mudar tabelas no MVP.
+- **LGPD**: com a IA ligada, o texto da carteira (nome do tutor e do pet) é enviado a um serviço
+  externo. Em produção, isso exigiria consentimento do tutor, contrato com o provedor e,
+  de preferência, a anonimização dos dados pessoais antes do envio.
 
 ## 👤 Autor
 Caio Martins Oliveira

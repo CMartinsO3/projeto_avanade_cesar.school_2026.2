@@ -3,8 +3,10 @@ package com.caiooliveira.petcheckin.dto;
 import java.time.LocalDateTime;
 
 import com.caiooliveira.petcheckin.model.Documento;
+import com.caiooliveira.petcheckin.model.MetodoExtracao;
 import com.caiooliveira.petcheckin.model.StatusDocumento;
 import com.caiooliveira.petcheckin.model.TipoDocumento;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 public record DocumentoResponse(
         Long id,
@@ -17,7 +19,9 @@ public record DocumentoResponse(
         StatusDocumento status,
         Double confiancaOcr,
         Integer palavrasOcr,
-        String textoExtraido
+        String textoExtraido,
+        MetodoExtracao metodoExtracao,
+        @JsonRawValue String dadosExtraidos
 ) {
 
     public static DocumentoResponse de(Documento documento) {
@@ -32,7 +36,9 @@ public record DocumentoResponse(
                 documento.getStatus(),
                 documento.getConfiancaOcr(),
                 documento.getPalavrasOcr(),
-                documento.getTextoExtraido()
+                documento.getTextoExtraido(),
+                documento.getMetodoExtracao(),
+                documento.getDadosExtraidos()
         );
     }
 }

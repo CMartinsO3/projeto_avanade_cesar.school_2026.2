@@ -55,6 +55,12 @@ public class Documento {
 
     private Integer palavrasOcr;
 
+    @Column(columnDefinition = "TEXT")
+    private String dadosExtraidos;
+
+    @Enumerated(EnumType.STRING)
+    private MetodoExtracao metodoExtracao;
+
     protected Documento() {
     }
 
@@ -79,6 +85,11 @@ public class Documento {
 
     public void registrarFalhaProcessamento() {
         this.status = StatusDocumento.FALHA_PROCESSAMENTO;
+    }
+
+    public void registrarExtracao(String json, MetodoExtracao metodo) {
+        this.dadosExtraidos = json;
+        this.metodoExtracao = metodo;
     }
 
     public Long getId() {
@@ -127,5 +138,13 @@ public class Documento {
 
     public Integer getPalavrasOcr() {
         return palavrasOcr;
+    }
+
+    public String getDadosExtraidos() {
+        return dadosExtraidos;
+    }
+
+    public MetodoExtracao getMetodoExtracao() {
+        return metodoExtracao;
     }
 }
