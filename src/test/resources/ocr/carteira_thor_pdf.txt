@@ -1,0 +1,18 @@
+CARTEIRA DE VACINAÇÃO
+Clínica Veterinária Patas Felizes (fictícia)
+Nome do pet: Thor
+Espécie: Canina
+Raça: Golden Retriever
+Data de nascimento: 15/03/2022
+Nome do tutor: Caio Oliveira
+VACINAS APLICADAS
+Vacina Aplicação Próxima dose
+Antirrábica 10/03/2026 10/03/2027
+V10 (Polivalente) 15/04/2026 15/04/2027
+Médica veterinária responsável: Dra. Ana Souza
+CRMV-PE 12345
+Recife, 15/04/2026
+Veterinário
+CRMV-PE 12345
+CRMV-PE 12345
+DOCUMENTO FICTÍCIO - USO EXCLUSIVO PARA TESTES DO PROJETO PETCHECK-IN

@@ -47,6 +47,16 @@ O banco fica disponível em `localhost:5433` (usuário/senha/banco: `petcheckin`
 
 Para desligar o banco: `docker compose down` (os dados são mantidos).
 
+### 🧪 Testes
+```bash
+./mvnw test
+```
+- **Testes unitários** (JUnit 5 + AssertJ, sem subir o Spring): uma classe de teste para cada regra
+  (R1, R2, R3, R4, R5, R9), com a data de hoje fixada por `Clock.fixed`, e testes do
+  `RegexExtratorService` usando o texto real que o OCR gerou do PNG e do PDF (`src/test/resources/ocr/`).
+- O teste `contextLoads` sobe a aplicação inteira e **precisa do PostgreSQL rodando** (`docker compose up -d`).
+  Para rodar só os unitários: `./mvnw test -Dtest='Regra*Test,RegexExtratorServiceTest'`.
+
 ## 📁 Estrutura do projeto
 ```
 src/main/java/com/caiooliveira/petcheckin/
@@ -260,6 +270,12 @@ Erros de validação também informam os campos com problema:
 - **Upload com `XMLHttpRequest`**: diferente do `fetch`, ele avisa quando o arquivo terminou de subir,
   e é isso que permite o stepper passar de "Upload" para "Processamento" no momento certo.
 - **Datas em `dd/mm/aaaa` só na tela**: a API continua em ISO 8601, e a conversão acontece no `app.js`.
+- **Testes de regra sem o Spring**: as regras são classes comuns que recebem o que precisam pelo
+  construtor, então o teste só faz `new RegraAntirrabica(relogioFixo)`. Os testes rodam em milissegundos
+  e não dependem de banco, de internet nem da data do computador.
+- **Testes nos limites**: além dos casos óbvios, os testes conferem as bordas (aplicada há exatamente
+  12 meses passa; há 12 meses e 1 dia falha; próxima dose no dia do check-out passa), que é onde os erros
+  costumam se esconder.
 - **Validação separada do upload**: o tutor pode enviar a carteira de novo e validar outra vez;
   a validação sempre usa a carteira processada mais recente.
 
