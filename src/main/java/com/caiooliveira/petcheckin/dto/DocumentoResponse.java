@@ -14,7 +14,10 @@ public record DocumentoResponse(
         String contentType,
         Long tamanhoBytes,
         LocalDateTime dataEnvio,
-        StatusDocumento status
+        StatusDocumento status,
+        Double confiancaOcr,
+        Integer palavrasOcr,
+        String textoExtraido
 ) {
 
     public static DocumentoResponse de(Documento documento) {
@@ -26,7 +29,10 @@ public record DocumentoResponse(
                 documento.getContentType(),
                 documento.getTamanhoBytes(),
                 documento.getDataEnvio(),
-                documento.getStatus()
+                documento.getStatus(),
+                documento.getConfiancaOcr(),
+                documento.getPalavrasOcr(),
+                documento.getTextoExtraido()
         );
     }
 }

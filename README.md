@@ -11,7 +11,7 @@ Em desenvolvimento.
 ## 🛠️ Tecnologias (planejadas)
 - Java 21 + Spring Boot 4
 - PostgreSQL (Docker)
-- Tesseract OCR + OpenCV
+- Tesseract OCR (via linha de comando) + Apache PDFBox (PDF → imagem)
 - Google Gemini (IA)
 
 ## ▶️ Como rodar
@@ -108,6 +108,13 @@ Erros de validação também informam os campos com problema:
 - **Nome do arquivo gerado com UUID**: evita que um arquivo sobrescreva outro e impede nomes maliciosos
   (ex.: `../../`). O caminho interno não é exposto na API.
 - **Rota aninhada `/api/reservas/{id}/documentos`**: deixa explícito que todo documento pertence a uma reserva.
+- **Tesseract chamado pela linha de comando (`ProcessBuilder`)**: evita os problemas de bibliotecas nativas
+  do Tess4J no Linux e segue o modelo da mentoria (`app.ocr.comando`). O formato TSV devolve a confiança
+  de cada palavra, usada como base da regra R1 (documento legível).
+- **PDF convertido em imagem com PDFBox (300 DPI, tons de cinza)**: o Tesseract só lê imagens.
+- **Falha no OCR não perde o envio**: o documento é salvo antes do processamento e, se o OCR falhar,
+  fica com status `FALHA_PROCESSAMENTO`. O processamento é síncrono no MVP; em produção, o ideal
+  seria uma fila assíncrona.
 
 ## 👤 Autor
 Caio Martins Oliveira

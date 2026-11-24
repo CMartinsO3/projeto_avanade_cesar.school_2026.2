@@ -48,11 +48,18 @@ public class Documento {
     @Column(nullable = false)
     private StatusDocumento status;
 
+    @Column(columnDefinition = "TEXT")
+    private String textoExtraido;
+
+    private Double confiancaOcr;
+
+    private Integer palavrasOcr;
+
     protected Documento() {
     }
 
     public Documento(Reserva reserva, TipoDocumento tipo, String nomeOriginal,
-                     String caminhoArquivo, String contentType, Long tamanhoBytes) {
+            String caminhoArquivo, String contentType, Long tamanhoBytes) {
         this.reserva = reserva;
         this.tipo = tipo;
         this.nomeOriginal = nomeOriginal;
@@ -61,6 +68,17 @@ public class Documento {
         this.tamanhoBytes = tamanhoBytes;
         this.dataEnvio = LocalDateTime.now();
         this.status = StatusDocumento.RECEBIDO;
+    }
+
+    public void registrarOcr(String texto, double confianca, int quantidadePalavras) {
+        this.textoExtraido = texto;
+        this.confiancaOcr = confianca;
+        this.palavrasOcr = quantidadePalavras;
+        this.status = StatusDocumento.PROCESSADO;
+    }
+
+    public void registrarFalhaProcessamento() {
+        this.status = StatusDocumento.FALHA_PROCESSAMENTO;
     }
 
     public Long getId() {
@@ -99,7 +117,15 @@ public class Documento {
         return status;
     }
 
-    public void setStatus(StatusDocumento status) {
-        this.status = status;
+    public String getTextoExtraido() {
+        return textoExtraido;
+    }
+
+    public Double getConfiancaOcr() {
+        return confiancaOcr;
+    }
+
+    public Integer getPalavrasOcr() {
+        return palavrasOcr;
     }
 }
